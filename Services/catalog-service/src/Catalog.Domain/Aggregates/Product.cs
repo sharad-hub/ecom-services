@@ -7,6 +7,12 @@ using CatalogService.Domain.ValueObjects;
 
 namespace CatalogService.Domain.Aggregates;
 
+/// <summary>
+/// Domain class representing a product in the catalog.
+/// It includes properties such as name, SKU, price, category, status, and description.
+/// The class also contains domain methods for creating, updating, activating, and archiving products. It raises domain events when a product is created. 
+/// The class is designed
+/// </summary>
 public sealed class Product : AggregateRoot<Guid>
 {
     private readonly List<ProductVariant> _variants = [];
@@ -30,6 +36,17 @@ public sealed class Product : AggregateRoot<Guid>
     {
     }
 
+    public Result Update(
+    string name,
+    Money price,
+    string? description)
+    {
+        Name = name;
+        Price = price;
+        Description = description;
+
+        return Result.Success();
+    }
     public static Result<Product> Create(
         string name,
         string sku,

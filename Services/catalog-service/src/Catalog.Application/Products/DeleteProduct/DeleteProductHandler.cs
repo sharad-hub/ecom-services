@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CatalogService.Application.Abstractions.Persistence;
+using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,39 @@ using System.Threading.Tasks;
 
 namespace Catalog.Application.Products.DeleteProduct
 {
-    internal class DeleteProductHandler
+    public sealed class DeleteProductHandler
+      : IRequestHandler<DeleteProductCommand>
     {
+        private readonly IProductRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public DeleteProductHandler(
+            IProductRepository repository,
+            IUnitOfWork unitOfWork)
+        {
+            _repository = repository;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task Handle(
+            DeleteProductCommand request,
+            CancellationToken cancellationToken)
+        {
+            var product = await _repository.GetByIdAsync(
+                request.Id,
+                cancellationToken);
+
+            if (product is null)
+            {
+                throw new Exception("Product not found");
+            }
+
+            await _repository.DeleteAsync(
+                product,
+                cancellationToken);
+
+            await _unitOfWork.SaveChangesAsync(
+                cancellationToken);
+        }
     }
 }

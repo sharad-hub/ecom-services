@@ -51,4 +51,22 @@ public sealed class ProductRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
+
+    public async Task UpdateAsync(
+    Product product,
+    CancellationToken cancellationToken = default)
+    {
+        _context.Products.Update(product);
+
+        await Task.CompletedTask;
+    }
+
+    public async Task UpdateAsync(
+    Product product,
+    CancellationToken cancellationToken = default)
+    {
+        _context.Products.Update(product);
+
+        await Task.CompletedTask;
+    }
 }

@@ -4,5 +4,5 @@ public record CreateProductRequest(
     string Sku,
     string Name,
     decimal Price,
-    Guid CategoryId,
+    string Currency,
     string Description);

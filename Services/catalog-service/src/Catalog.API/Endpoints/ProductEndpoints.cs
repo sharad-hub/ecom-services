@@ -1,4 +1,6 @@
 ﻿using Catalog.API.Contracts;
+using Catalog.Application.Products.Commands.UpdateProduct;
+using Catalog.Application.Products.DeleteProduct;
 using CatalogService.Application.Products.Commands.CreateProduct;
 using CatalogService.Application.Products.Queries.GetProductById;
 using CatalogService.Application.Products.Queries.GetProducts;
@@ -19,8 +21,36 @@ public static class ProductEndpoints
 
         group.MapGet("/", GetProducts);
 
+        group.MapPut("/{id:guid}", UpdateProduct);
 
+        group.MapDelete("/{id:guid}", DeleteProduct);
         return group;
+    }
+
+
+    private static async Task<IResult> DeleteProduct(
+    Guid id,
+    ISender sender)
+    {
+        await sender.Send(
+            new DeleteProductCommand(id));
+
+        return Results.NoContent();
+    }
+    private static async Task<IResult> UpdateProduct(
+    Guid id,
+    UpdateProductRequest request,
+    ISender sender)
+    {
+        await sender.Send(
+            new UpdateProductCommand(
+                id,
+                request.Name,
+                request.Price,
+                request.Currency,
+                request.Description));
+
+        return Results.NoContent();
     }
 
     private static async Task<IResult> GetProducts(
