@@ -61,12 +61,45 @@ public sealed class ProductRepository
         await Task.CompletedTask;
     }
 
-    public async Task UpdateAsync(
-    Product product,
+    public async Task DeleteAsync(Product product,
     CancellationToken cancellationToken = default)
     {
-        _context.Products.Update(product);
+        //_context.Products.Remove(product);
+        //await Task.CompletedTask;
+    }
 
-        await Task.CompletedTask;
+    public async Task<(List<Product>, int)> GetPagedAsync(
+    int page,
+    int pageSize,
+    string? name,
+    string? sku,
+    CancellationToken cancellationToken = default)
+    {
+        IQueryable<Product> query =
+            _context.Products.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(
+                x => x.Name.Contains(name));
+        }
+
+        if (!string.IsNullOrWhiteSpace(sku))
+        {
+            query = query.Where(
+                x => x.Sku.Contains(sku));
+        }
+
+        int totalCount =
+            await query.CountAsync(cancellationToken);
+
+        List<Product> items =
+            await query
+                .OrderBy(x => x.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 }

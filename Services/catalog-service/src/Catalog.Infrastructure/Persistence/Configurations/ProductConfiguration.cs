@@ -44,6 +44,9 @@ public sealed class ProductConfiguration
         builder.HasIndex(x => x.Sku)
             .IsUnique();
 
+        builder.Property<bool>("IsDeleted")
+       .HasDefaultValue(false);
+
         builder.OwnsOne(x => x.Price, price =>
         {
             price.Property(p => p.Amount)
@@ -55,6 +58,8 @@ public sealed class ProductConfiguration
                 .HasMaxLength(3);
         });
 
+        builder.HasQueryFilter(
+            x => !x.IsDeleted);
         builder.Ignore(x => x.DomainEvents);
     }
 }

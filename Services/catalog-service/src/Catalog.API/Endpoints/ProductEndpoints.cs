@@ -47,7 +47,7 @@ public static class ProductEndpoints
                 id,
                 request.Name,
                 request.Price,
-                request.Currency,
+                "USD",
                 request.Description));
 
         return Results.NoContent();
@@ -80,7 +80,7 @@ public static class ProductEndpoints
             request.Sku,            
             request.Price,
             "USD",
-            request.CategoryId,
+             Guid.Parse("11111111-1111-1111-1111-111111111111"),
             request.Description);
 
         Guid id = await sender.Send(command);

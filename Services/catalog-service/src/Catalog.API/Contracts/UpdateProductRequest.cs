@@ -1,8 +1,5 @@
 ﻿namespace Catalog.API.Contracts
 {
-    public class UpdateProductRequest
-    {
-    }
 
     public record UpdateProductRequest(
     string Sku,

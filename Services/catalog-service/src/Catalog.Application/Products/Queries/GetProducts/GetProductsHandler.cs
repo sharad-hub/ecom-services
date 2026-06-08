@@ -1,11 +1,16 @@
-﻿using CatalogService.Application.Abstractions.Persistence;
+﻿using Catalog.Application.Products.Queries.GetProductById;
+using CatalogService.Application.Abstractions.Persistence;
 using CatalogService.Application.DTOs;
 using MediatR;
 
 namespace CatalogService.Application.Products.Queries.GetProducts;
 
+using MediatR;
+
+ 
+
 public sealed class GetProductsHandler
-    : IRequestHandler<GetProductsQuery, List<ProductDto>>
+    : IRequestHandler<GetProductsQuery, PagedResponse<ProductDto>>
 {
     private readonly IProductRepository _repository;
 
@@ -15,22 +20,33 @@ public sealed class GetProductsHandler
         _repository = repository;
     }
 
-    public async Task<List<ProductDto>> Handle(
+    public async Task<PagedResponse<ProductDto>> Handle(
         GetProductsQuery request,
         CancellationToken cancellationToken)
     {
-        var products = await _repository.GetAllAsync(
-            cancellationToken);
+        var (products, totalCount) =
+            await _repository.GetPagedAsync(
+                request.Page,
+                request.PageSize,
+                request.Name,
+                request.Sku,
+                cancellationToken);
 
-        return products.Select(x =>
-            new ProductDto(
-                x.Id,
-                x.Name,
-                x.Sku,                
-                x.Price.Amount,
-                x.Price.Currency,
-                x.CategoryId,
-                x.Description))
+        var items = products
+            .Select(product => new ProductDto(
+                product.Id,
+                product.Name,
+                product.Sku,                
+                product.Price.Amount,
+                product.Price.Currency,
+               Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                product.Description))
             .ToList();
+
+        return new PagedResponse<ProductDto>(
+            items,
+            request.Page,
+            request.PageSize,
+            totalCount);
     }
 }

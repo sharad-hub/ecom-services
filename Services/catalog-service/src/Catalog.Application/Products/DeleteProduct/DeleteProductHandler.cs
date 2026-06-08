@@ -35,9 +35,12 @@ namespace Catalog.Application.Products.DeleteProduct
                 throw new Exception("Product not found");
             }
 
-            await _repository.DeleteAsync(
-                product,
-                cancellationToken);
+            product.Delete();
+
+            //Since EF Core tracks entities returned by GetByIdAsync(), so we usually don't even need:
+            //await _repository.UpdateAsync(
+            //     product,
+            //     cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(
                 cancellationToken);

@@ -3,6 +3,7 @@ using CatalogService.Application.Abstractions.Persistence;
 using CatalogService.Domain.Aggregates;
 using CatalogService.Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace CatalogService.Application.Products.Commands.CreateProduct;
 
@@ -12,15 +13,16 @@ public sealed class CreateProductHandler
     private readonly IProductRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEventPublisher _eventPublisher;
-
+    private readonly ILogger<CreateProductHandler> _logger;
     public CreateProductHandler(
         IProductRepository repository,
         IUnitOfWork unitOfWork,
-        IEventPublisher eventPublisher)
+        IEventPublisher eventPublisher, ILogger<CreateProductHandler> logger)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _eventPublisher = eventPublisher;
+        _logger = logger;
     }
 
     public async Task<Guid> Handle(
@@ -47,7 +49,9 @@ public sealed class CreateProductHandler
             Money.Create(
                 request.Price,
                 request.Currency).Value;
-
+        _logger.LogInformation(
+    "Creating product {Sku}",
+    request.Sku);
         var productResult = Product.Create(
             request.Name,
             request.Sku,

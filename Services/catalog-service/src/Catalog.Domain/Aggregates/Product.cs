@@ -29,6 +29,11 @@ public sealed class Product : AggregateRoot<Guid>
 
     public string? Description { get; private set; }
 
+
+    public bool IsDeleted { get; private set; }
+
+    public DateTime? DeletedOnUtc { get; private set; }
+
     public IReadOnlyCollection<ProductVariant> Variants =>
         _variants.AsReadOnly();
 
@@ -106,6 +111,13 @@ public sealed class Product : AggregateRoot<Guid>
     public Result Archive()
     {
         Status = ProductStatus.Archived;
+        return Result.Success();
+    }
+    public Result Delete()
+    {
+        IsDeleted = true;
+        DeletedOnUtc = DateTime.UtcNow;
+
         return Result.Success();
     }
 }

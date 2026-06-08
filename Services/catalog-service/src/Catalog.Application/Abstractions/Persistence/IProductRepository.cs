@@ -23,4 +23,11 @@ public interface IProductRepository
 
     Task DeleteAsync(Product product,
     CancellationToken cancellationToken = default);
+
+    Task<(List<Product>, int)> GetPagedAsync(
+    int page,
+    int pageSize,
+    string? name,
+    string? sku,
+    CancellationToken cancellationToken = default);
 }
