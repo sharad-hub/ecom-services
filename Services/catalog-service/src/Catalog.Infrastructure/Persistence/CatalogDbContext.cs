@@ -1,3 +1,4 @@
+using Catalog.Domain.Aggregates;
 using CatalogService.Domain.Aggregates;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public sealed class CatalogDbContext : DbContext
     }
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<Category> Categories => Set<Category>();
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)

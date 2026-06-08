@@ -29,5 +29,8 @@ public interface IProductRepository
     int pageSize,
     string? name,
     string? sku,
+    Guid? categoryId,
+    string sortBy,
+    bool descending,
     CancellationToken cancellationToken = default);
 }

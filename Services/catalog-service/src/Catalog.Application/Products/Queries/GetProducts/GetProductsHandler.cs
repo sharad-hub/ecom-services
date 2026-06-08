@@ -25,12 +25,15 @@ public sealed class GetProductsHandler
         CancellationToken cancellationToken)
     {
         var (products, totalCount) =
-            await _repository.GetPagedAsync(
-                request.Page,
-                request.PageSize,
-                request.Name,
-                request.Sku,
-                cancellationToken);
+     await _repository.GetPagedAsync(
+         request.Page,
+         request.PageSize,
+         request.Name,
+         request.Sku,
+         request.CategoryId,
+         request.SortBy,
+         request.Descending,
+         cancellationToken);
 
         var items = products
             .Select(product => new ProductDto(

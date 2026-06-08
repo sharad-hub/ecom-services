@@ -23,10 +23,19 @@ builder.Host.UseSerilog();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration =
+        builder.Configuration.GetConnectionString("Redis");
+});
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
-
+builder.Services
+    .AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration
+            .GetConnectionString("CatalogDb")!);
 
 Console.WriteLine("Building app");
 
@@ -59,10 +68,11 @@ app.UseSwaggerUI();
 
 //app.UseHttpsRedirection();
 
-app.MapGet("/health", () =>
-{
-    return Results.Ok("Catalog API Healthy");
-});
+// app.MapGet("/health", () =>
+// {
+//     return Results.Ok("Catalog API Healthy");
+// });
+app.MapHealthChecks("/health");
 Console.WriteLine("health");
 
 //.WithOpenApi();

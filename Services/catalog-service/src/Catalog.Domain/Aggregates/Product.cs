@@ -1,3 +1,4 @@
+using Catalog.Domain.Aggregates;
 using CatalogService.Domain.Common;
 using CatalogService.Domain.Entities;
 using CatalogService.Domain.Enums;
@@ -25,6 +26,8 @@ public sealed class Product : AggregateRoot<Guid>
 
     public Guid CategoryId { get; private set; }
 
+    public Category Category { get; private set; } = default!;
+
     public ProductStatus Status { get; private set; }
 
     public string? Description { get; private set; }
@@ -33,6 +36,7 @@ public sealed class Product : AggregateRoot<Guid>
     public bool IsDeleted { get; private set; }
 
     public DateTime? DeletedOnUtc { get; private set; }
+    public DateTime CreatedOnUtc { get; set; }
 
     public IReadOnlyCollection<ProductVariant> Variants =>
         _variants.AsReadOnly();
@@ -85,7 +89,9 @@ public sealed class Product : AggregateRoot<Guid>
             Price = price,
             CategoryId = categoryId,
             Description = description,
-            Status = ProductStatus.Draft
+            Status = ProductStatus.Draft,
+            CreatedOnUtc = DateTime.UtcNow,
+            IsDeleted = false
         };
 
         product.RaiseDomainEvent(

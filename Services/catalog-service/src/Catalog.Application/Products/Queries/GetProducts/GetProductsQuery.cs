@@ -10,5 +10,8 @@ public record GetProductsQuery(
     int Page = 1,
     int PageSize = 20,
     string? Name = null,
-    string? Sku = null)
+    string? Sku = null,
+    Guid? CategoryId = null,
+    string SortBy = "Name",
+    bool Descending = false)
     : IRequest<PagedResponse<ProductDto>>;

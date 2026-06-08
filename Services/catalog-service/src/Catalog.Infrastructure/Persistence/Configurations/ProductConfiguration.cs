@@ -1,3 +1,4 @@
+using Catalog.Domain.Aggregates;
 using CatalogService.Domain.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -61,5 +62,15 @@ public sealed class ProductConfiguration
         builder.HasQueryFilter(
             x => !x.IsDeleted);
         builder.Ignore(x => x.DomainEvents);
+
+        builder
+    .HasOne(x => x.Category)
+    .WithMany(x => x.Products)
+    .HasForeignKey(x => x.CategoryId);
+
+    //    builder
+    //.HasOne<Category>()
+    //.WithMany()
+    //.HasForeignKey(x => x.CategoryId);
     }
 }

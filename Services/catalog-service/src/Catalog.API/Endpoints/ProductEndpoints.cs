@@ -1,10 +1,12 @@
 ﻿using Catalog.API.Contracts;
+using Catalog.Application.Products.Commands.ProductStatus;
 using Catalog.Application.Products.Commands.UpdateProduct;
 using Catalog.Application.Products.DeleteProduct;
 using CatalogService.Application.Products.Commands.CreateProduct;
 using CatalogService.Application.Products.Queries.GetProductById;
 using CatalogService.Application.Products.Queries.GetProducts;
 using MediatR;
+using System.Reflection;
 
 namespace Catalog.API.Endpoints;
 
@@ -24,9 +26,27 @@ public static class ProductEndpoints
         group.MapPut("/{id:guid}", UpdateProduct);
 
         group.MapDelete("/{id:guid}", DeleteProduct);
+
+        group.MapPatch("/{id:guid}/activate", ActivateProduct);
+
+        group.MapPatch("/{id:guid}/archive", ArchiveProduct);
+
         return group;
     }
 
+    private static async Task<IResult> ArchiveProduct(Guid id, ISender sender)
+    {
+        await sender.Send(new ArchiveProductCommand(id));
+
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> ActivateProduct(Guid id, ISender sender)
+    {
+        await sender.Send(new ActivateProductCommand(id));
+
+        return Results.NoContent();
+    }
 
     private static async Task<IResult> DeleteProduct(
     Guid id,
@@ -54,10 +74,19 @@ public static class ProductEndpoints
     }
 
     private static async Task<IResult> GetProducts(
+    [AsParameters] GetProductsRequest request,
     ISender sender)
     {
-        var result = await sender.Send(
-            new GetProductsQuery());
+        var result =
+            await sender.Send(
+                new GetProductsQuery(
+                    request.Page,
+                    request.PageSize,
+                    request.Name,
+                    request.Sku,
+                    request.CategoryId,
+                    request.SortBy,
+                    request.Descending));
 
         return Results.Ok(result);
     }
@@ -77,7 +106,7 @@ public static class ProductEndpoints
     {
         var command = new CreateProductCommand(
             request.Name,
-            request.Sku,            
+            request.Sku,
             request.Price,
             "USD",
              Guid.Parse("11111111-1111-1111-1111-111111111111"),

@@ -1,6 +1,7 @@
 using CatalogService.Application.Abstractions.Persistence;
 using CatalogService.Domain.Aggregates;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Catalog.Infrastructure.Persistence.Repositories;
 
@@ -73,10 +74,14 @@ public sealed class ProductRepository
     int pageSize,
     string? name,
     string? sku,
+    Guid? categoryId,
+    string sortBy,
+    bool descending,
     CancellationToken cancellationToken = default)
     {
         IQueryable<Product> query =
-            _context.Products.AsNoTracking();
+            _context.Products
+                .AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(name))
         {
@@ -90,16 +95,36 @@ public sealed class ProductRepository
                 x => x.Sku.Contains(sku));
         }
 
+        if (categoryId.HasValue)
+        {
+            query = query.Where(
+                x => x.CategoryId == categoryId.Value);
+        }
+
+        query = sortBy.ToLower() switch
+        {
+            "price" => descending
+                ? query.OrderByDescending(x => x.Price.Amount)
+                : query.OrderBy(x => x.Price.Amount),
+
+            "createdon" => descending
+                ? query.OrderByDescending(x => x.CreatedOnUtc)
+                : query.OrderBy(x => x.CreatedOnUtc),
+
+            _ => descending
+                ? query.OrderByDescending(x => x.Name)
+                : query.OrderBy(x => x.Name)
+        };
+
         int totalCount =
             await query.CountAsync(cancellationToken);
 
-        List<Product> items =
+        var products =
             await query
-                .OrderBy(x => x.Name)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
 
-        return (items, totalCount);
+        return (products, totalCount);
     }
 }
