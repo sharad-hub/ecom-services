@@ -1,0 +1,52 @@
+/responses/*
+/ai-md/*
+*/bin/*
+*/obj/*
+/CopilotIndices/*
+*.vs*
+.vs/slnx.sqlite
+*.dll
+*.txt
+*.exe
+obj/*
+Services/catalog-service/src/Catalog.API/bin/Debug/net8.0/Catalog.API.exe
+*.md
+*.cache
+*.json
+*.log
+*.props
+*.targets
+*.csproj.user
+/net8.0/*
+Services/catalog-service/src/Catalog.API/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+Services/catalog-service/src/Catalog.Application/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+# Build output
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# Logs
+*.log
+
+# Symbols
+*.pdb
+
+# Cache
+*.cache
+
+# Docker
+docker-data/
+
+# OS files
+.DS_Store
+Thumbs.db
