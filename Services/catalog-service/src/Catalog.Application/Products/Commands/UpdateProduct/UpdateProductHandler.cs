@@ -1,4 +1,5 @@
-﻿using CatalogService.Application.Abstractions.Persistence;
+﻿using Catalog.Domain.Contract;
+using CatalogService.Application.Abstractions.Persistence;
 using CatalogService.Domain.ValueObjects;
 using MediatR;
 using System;
@@ -14,6 +15,7 @@ namespace Catalog.Application.Products.Commands.UpdateProduct
     {
         private readonly IProductRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IProductCacheService _cacheService;
 
         public UpdateProductHandler(
             IProductRepository repository,
@@ -51,6 +53,7 @@ namespace Catalog.Application.Products.Commands.UpdateProduct
 
             await _unitOfWork.SaveChangesAsync(
                 cancellationToken);
+            await _cacheService.RemoveAsync(product.Id);
         }
     }
 }

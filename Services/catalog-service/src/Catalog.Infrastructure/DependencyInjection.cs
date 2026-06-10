@@ -36,6 +36,8 @@ public static class DependencyInjection
 
         services.AddScoped<IEventPublisher,
             InMemoryEventPublisher>();
+        services.AddScoped<IProductCacheService,
+            ProductCacheService>();
 
         return services;
     }

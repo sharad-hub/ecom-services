@@ -1,3 +1,4 @@
+using Catalog.Domain.Contract;
 using CatalogService.Application.Abstractions.Persistence;
 using CatalogService.Application.DTOs;
 using MediatR;
@@ -8,6 +9,7 @@ public sealed class GetProductByIdHandler
     : IRequestHandler<GetProductByIdQuery, ProductDto?>
 {
     private readonly IProductRepository _repository;
+    private readonly IProductCacheService _cacheService;
 
     public GetProductByIdHandler(
         IProductRepository repository)
@@ -19,6 +21,15 @@ public sealed class GetProductByIdHandler
         GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
+        var cachedProduct =
+    await _cacheService.GetAsync(
+        request.Id);
+
+        if (cachedProduct is not null)
+        {
+            return cachedProduct;
+        }
+
         var product =
             await _repository.GetByIdAsync(
                 request.Id,
@@ -26,8 +37,9 @@ public sealed class GetProductByIdHandler
 
         if (product is null)
             return null;
+  
 
-        return new ProductDto(
+       var dto= new ProductDto(
             product.Id,
             product.Name,
             product.Sku,
@@ -36,5 +48,9 @@ public sealed class GetProductByIdHandler
             product.CategoryId,
             product.Status.ToString()
         );
+
+        await _cacheService.SetAsync(dto);
+
+        return dto;
     }
 }

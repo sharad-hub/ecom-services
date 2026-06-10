@@ -1,5 +1,6 @@
 ﻿using CatalogService.Application.DTOs;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,13 @@ namespace Catalog.Infrastructure.Persistence
     : IProductCacheService
     {
         private readonly IDistributedCache _cache;
+        private readonly ILogger<ProductCacheService> _logger;
 
         public ProductCacheService(
-            IDistributedCache cache)
+            IDistributedCache cache,ILogger<ProductCacheService> logger)
         {
             _cache = cache;
+            _logger = logger;
         }
 
         public async Task<ProductDto?> GetAsync(Guid id)
@@ -25,6 +28,7 @@ namespace Catalog.Infrastructure.Persistence
             var json =
                 await _cache.GetStringAsync(
                     $"product:{id}");
+            _logger.LogInformation("Cache hit for product {Id}",id);
 
             return json is null
                 ? null

@@ -27,6 +27,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration =
         builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "Catalog:";
 });
 
 builder.Services.AddInfrastructure(builder.Configuration);

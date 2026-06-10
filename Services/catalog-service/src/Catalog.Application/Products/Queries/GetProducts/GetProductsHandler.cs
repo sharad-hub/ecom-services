@@ -24,6 +24,8 @@ public sealed class GetProductsHandler
         GetProductsQuery request,
         CancellationToken cancellationToken)
     {
+
+
         var (products, totalCount) =
      await _repository.GetPagedAsync(
          request.Page,
