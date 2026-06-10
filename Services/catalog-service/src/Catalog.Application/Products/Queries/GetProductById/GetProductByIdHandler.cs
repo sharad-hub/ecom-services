@@ -12,9 +12,11 @@ public sealed class GetProductByIdHandler
     private readonly IProductCacheService _cacheService;
 
     public GetProductByIdHandler(
-        IProductRepository repository)
+        IProductRepository repository, IProductCacheService productCache)
+
     {
         _repository = repository;
+        _cacheService = productCache;
     }
 
     public async Task<ProductDto?> Handle(
@@ -34,6 +36,12 @@ public sealed class GetProductByIdHandler
             await _repository.GetByIdAsync(
                 request.Id,
                 cancellationToken);
+
+        Console.WriteLine($"Product null: {product == null}");
+        Console.WriteLine($"Price null: {product?.Price == null}");
+        Console.WriteLine($"Category null: {product?.Category == null}");
+        Console.WriteLine($"Sku: {product?.Sku}");
+        Console.WriteLine($"Name: {product?.Name}");
 
         if (product is null)
             return null;

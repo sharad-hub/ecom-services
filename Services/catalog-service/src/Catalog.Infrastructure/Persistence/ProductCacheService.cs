@@ -1,4 +1,5 @@
-﻿using CatalogService.Application.DTOs;
+﻿using Catalog.Domain.Contract;
+using CatalogService.Application.DTOs;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using System;

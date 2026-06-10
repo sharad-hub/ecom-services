@@ -1,3 +1,4 @@
+using Catalog.Domain.Contract;
 using CatalogService.Application.Behaviors;
 using FluentValidation;
 using MediatR;
@@ -27,6 +28,8 @@ public static class DependencyInjection
         services.AddTransient(
             typeof(IPipelineBehavior<,>),
             typeof(LoggingBehavior<,>));
+
+      
 
         return services;
     }
